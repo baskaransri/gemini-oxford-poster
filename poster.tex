@@ -19,37 +19,70 @@
 \pgfplotsset{compat=1.14}
 \usepackage{anyfontsize}
 
+% Baskaran Customization
+\usepackage{xcolor}
+\usepackage{calc}
+\usepackage{outlines}
+\newcommand{\matr}[1]{\bm{#1}}
+\newcommand{\set}[1]{\mathcal{#1}}
+\usepackage{bm}
+%\usepackage{cite}
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\MSE}{$\mathbb{E}[\textrm{MSE}]$}
+
+\newcommand{\errA}{$\color{Oxford_burnt_orange} \xi_{1}(\set{S}) \:$}
+\newcommand{\errB}{$\color{Oxford_rich_burgundy} \xi_{2}(\set{S}) \:$}
+
+\definecolor{Oxford_burnt_orange}{RGB}{207,122,48}
+\definecolor{myorange}{RGB}{207,122,48}
+\definecolor{Oxford_light_gold}{RGB}{243,222,116}
+\definecolor{Oxford_rich_burgundy}{RGB}{135,36,52}
+
+
+\definecolor{Oxford_dark_olive_green}{RGB}{105,145,59}
+\definecolor{mygreen}{RGB}{105,145,59}
+\definecolor{Oxford_bright_red}{RGB}{190,15,52}
+
+\usepackage{geometry}
+\geometry{a0paper, landscape, margin=0in}
 % ====================
 % Lengths
 % ====================
 
 % If you have N columns, choose \sepwidth and \colwidth such that
 % (N+1)*\sepwidth + N*\colwidth = \paperwidth
+% For sepwidth = s*\paperwidth, colwidth = c*\paperwidth, N=3
+% c = (1 - 4s)/3
 \newlength{\sepwidth}
 \newlength{\colwidth}
-\setlength{\sepwidth}{0.025\paperwidth}
-\setlength{\colwidth}{0.3\paperwidth}
 
+%\setlength{\sepwidth}{0.025\paperwidth}
+%\setlength{\colwidth}{0.3\paperwidth}
+
+\setlength{\sepwidth}{0.043\paperwidth}
+\setlength{\colwidth}{0.276\paperwidth}
 \newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+
 
 % ====================
 % Title
 % ====================
 
-\title{Some fancy title: followed by some more text}
+\title{On the Impact of Sample Size in Graph Signal Reconstruction}
 
-\author{Alyssa P. Hacker \inst{1} \and Ben Bitdiddle \inst{2} \and Lem E. Tweakit \inst{2}}
+%\author{Baskaran Sripathmanathan \inst{1} \and Xiaowen Dong \inst{1} \and Michael Bronstein \inst{1}}
+\author{Baskaran Sripathmanathan  \and Xiaowen Dong  \and Michael Bronstein }
 
-\institute[shortinst]{\inst{1} Some Institute \samelineand \inst{2} Another Institute}
+\institute[shortinst]{ University of Oxford } %\samelineand \inst{2} Another Institute}
 
 % ====================
 % Footer (optional)
 % ====================
 
 \footercontent{
-  \href{https://www.example.com}{https://www.example.com} \hfill
-  ABC Conference 2025, New York --- XYZ-1234 \hfill
-  \href{mailto:alyssa.p.hacker@example.com}{alyssa.p.hacker@example.com}}
+  \href{baskaransri.github.io}{baskaransri.github.io} \hfill
+  SampTA Conference 2023 \hfill
+  \href{baskaran@robots.ox.ac.uk}{baskaran@robots.ox.ac.uk}}
 % (can be left out to remove footer)
 
 % ====================
@@ -57,8 +90,8 @@
 % ====================
 
 % use this to include logos on the left and/or right side of the header:
-% \logoright{\includegraphics[height=7cm]{logo1.pdf}}
-% \logoleft{\includegraphics[height=7cm]{logo2.pdf}}
+ \logoright{\includegraphics[height=6cm]{impct_of_sample_size_qr.png}}
+ \logoleft{\includegraphics[height=6cm]{ox_brand_cmyk_rev.pdf}}
 
 % ====================
 % Body
@@ -72,229 +105,126 @@
 
 \begin{column}{\colwidth}
 
-  \begin{block}{A block title}
-
-    Some block contents, followed by a diagram, followed by a dummy paragraph.
-
-    \begin{figure}
-      \centering
-      \begin{tikzpicture}[scale=6]
-        \draw[step=0.25cm,color=gray] (-1,-1) grid (1,1);
-        \draw (1,0) -- (0.2,0.2) -- (0,1) -- (-0.2,0.2) -- (-1,0)
-          -- (-0.2,-0.2) -- (0,-1) -- (0.2,-0.2) -- cycle;
-      \end{tikzpicture}
-      \caption{A figure caption.}
-    \end{figure}
-
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ultricies
-    eget libero ac ullamcorper. Integer et euismod ante. Aenean vestibulum
-    lobortis augue, ut lobortis turpis rhoncus sed. Proin feugiat nibh a
-    lacinia dignissim. Proin scelerisque, risus eget tempor fermentum, ex
-    turpis condimentum urna, quis malesuada sapien arcu eu purus.
+  \begin{block}{Introduction}
+  Graph sampling \& reconstruction involves observing values on some nodes on a known graph and inferring the values on the other nodes under smoothness assumptions. We ask:
+  \begin{enumerate}
+      \item Do more observations always reduce average mean squared error of reconstruction  \MSE?
+      \item Does noise affect this?
+      \item Can we cleverly choose samples to always reduce reconstruction error?
+  \end{enumerate}
 
   \end{block}
+\vskip-0.5ex
+  \begin{alertblock}{What is Graph Sampling \& Reconstruction?}
+  On a social network, if you knew someone's friends were all 19, they are likely 19 years old. We can generalise this to reconstruct a signal via least squares (LS) reconstruction.
+  \begin{outline}[enumerate]
+      \1 Assume we know all friendships amongst the $N$ friends.
+      \1 Assume friendships are symmetric.
+      \1 Write the sum of squared difference between friends' ages $\vect{a}$ as $\vect{a}^{T}\matr{L}\vect{a}$.
+      \1 Construct $\matr{U}_{k} \in \mathbb{R}^{N \times k}$ with columns the $k$ eigenvectors of $\matr{L} \in \mathbb{R}^{N \times N}$ corresponding to $\matr{L}$'s smallest eigenvalues. 
+  \end{outline}
+Observing a set $\set{S}$ of people, we can infer all ages $\hat{\vect{a}}$ by LS:
+  \[
+  \hat{\vect{a}} = \matr{U}_{k}\left(\left( \matr{U}_{k} \right)_{\set{S}}\right)^{\dagger} \vect{a}_{\set{S}}
+  \]
+  where $()_{\set{S}}$ restricts to rows corresponding to $\set{S}$, and $()^{\dagger}$ is the least-squares pseudoinverse. Under such a model, we only need $k$ observations! \cite{pesenson2008sampling}
 
-  \begin{block}{A block containing a list}
-
-    Nam vulputate nunc felis, non condimentum lacus porta ultrices. Nullam sed
-    sagittis metus. Etiam consectetur gravida urna quis suscipit.
-
-    \begin{itemize}
-      \item \textbf{Mauris tempor} risus nulla, sed ornare
-      \item \textbf{Libero tincidunt} a duis congue vitae
-      \item \textbf{Dui ac pretium} morbi justo neque, ullamcorper
-    \end{itemize}
-
-    Eget augue porta, bibendum venenatis tortor.
-
-  \end{block}
-
-  \begin{alertblock}{A highlighted block}
-
-    This block catches your eye, so \textbf{important stuff} should probably go
-    here.
-
-    Curabitur eu libero vehicula, cursus est fringilla, luctus est. Morbi
-    consectetur mauris quam, at finibus elit auctor ac. Aliquam erat volutpat.
-    Aenean at nisl ut ex ullamcorper eleifend et eu augue. Aenean quis velit
-    tristique odio convallis ultrices a ac odio.
-
-    \begin{itemize}
-      \item \textbf{Fusce dapibus tellus} vel tellus semper finibus. In
-        consequat, nibh sed mattis luctus, augue diam fermentum lectus.
-      \item \textbf{In euismod erat metus} non ex. Vestibulum luctus augue in
-        mi condimentum, at sollicitudin lorem viverra.
-      \item \textbf{Suspendisse vulputate} mauris vel placerat consectetur.
-        Mauris semper, purus ac hendrerit molestie, elit mi dignissim odio, in
-        suscipit felis sapien vel ex.
-    \end{itemize}
-
-    Aenean tincidunt risus eros, at gravida lorem sagittis vel. Vestibulum ante
-    ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.
-
+  Different choices of \set{S} result in different condition numbers (and sensitivity to noise) for $\matr{U}_{k}\left(\left( \matr{U}_{k} \right)_{\set{S}}\right)^{\dagger}$ . We show experiments using four different methods to the right.
   \end{alertblock}
 
+\vskip-0.5ex
+
+  \begin{block}{Technical details about the Setting}
+
+\begin{itemize}
+    \item Underlying, clean $k$-bandlimited signal $\vect{x}$ with $k$ known
+    \item Noise $\vect{\epsilon} \sim \mathcal{N}(0,\matr{I}_{N})$ (ask me about this!)
+    \item Use an `optimal' scheme  to choose a vertex sample set $\set{S}$. \cite{wang2019low,jayawant2021doptimal,bai2020fast,puy2018random}
+    \item Observe $\vect{y} = \vect{x} + \sigma\cdot \vect{\epsilon}$ at  $\set{S}$
+    \item Unregularised least squares (LS) reconstruction
+\end{itemize}
+  \end{block}
+
 \end{column}
 
 \separatorcolumn
 
 \begin{column}{\colwidth}
 
-  \begin{block}{A block containing an enumerated list}
-
-    Vivamus congue volutpat elit non semper. Praesent molestie nec erat ac
-    interdum. In quis suscipit erat. \textbf{Phasellus mauris felis, molestie
-    ac pharetra quis}, tempus nec ante. Donec finibus ante vel purus mollis
-    fermentum. Sed felis mi, pharetra eget nibh a, feugiat eleifend dolor. Nam
-    mollis condimentum purus quis sodales. Nullam eu felis eu nulla eleifend
-    bibendum nec eu lorem. Vivamus felis velit, volutpat ut facilisis ac,
-    commodo in metus.
-
-    \begin{enumerate}
-      \item \textbf{Morbi mauris purus}, egestas at vehicula et, convallis
-        accumsan orci. Orci varius natoque penatibus et magnis dis parturient
-        montes, nascetur ridiculus mus.
-      \item \textbf{Cras vehicula blandit urna ut maximus}. Aliquam blandit nec
-        massa ac sollicitudin. Curabitur cursus, metus nec imperdiet bibendum,
-        velit lectus faucibus dolor, quis gravida metus mauris gravida turpis.
-      \item \textbf{Vestibulum et massa diam}. Phasellus fermentum augue non
-        nulla accumsan, non rhoncus lectus condimentum.
-    \end{enumerate}
+  \begin{block}{Theoretical Results}
+  Under unregularised LS reconstruction:
+  \begin{enumerate}
+      \item Without noise, extra samples never increase \MSE.
+      \item With enough noise, extra samples \emph{can} increase \MSE.
+      \item Optimal sampling cannot mitigate this.
+  \end{enumerate}
 
   \end{block}
 
-  \begin{block}{Fusce aliquam magna velit}
+\vskip2ex
 
-    Et rutrum ex euismod vel. Pellentesque ultricies, velit in fermentum
-    vestibulum, lectus nisi pretium nibh, sit amet aliquam lectus augue vel
-    velit. Suspendisse rhoncus massa porttitor augue feugiat molestie. Sed
-    molestie ut orci nec malesuada. Sed ultricies feugiat est fringilla
-    posuere.
+  \begin{block}{Experimental Results}
+With high noise, increasing sample size can \emph{increase} error:
 
-    \begin{figure}
-      \centering
-      \begin{tikzpicture}
-        \begin{axis}[
-            scale only axis,
-            no markers,
-            domain=0:2*pi,
-            samples=100,
-            axis lines=center,
-            axis line style={-},
-            ticks=none]
-          \addplot[red] {sin(deg(x))};
-          \addplot[blue] {cos(deg(x))};
-        \end{axis}
-      \end{tikzpicture}
-      \caption{Another figure caption.}
-    \end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[scale=2.5]{BA_3_1000_bandwidth_100_SNRdbs_-10.0_samps_200_MSE_LS.png}
+    \caption{Signal-to-Noise ratio of $10^{-1}$}
+    \label{fig:High Noise}
+\end{figure}
 
+The peak is at the bandwidth of the signal. We can compute the threshold $\tau$, where if the signal-to-noise ratio is below $\tau$, observing another vertex will increase \MSE:
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=2.5]{BA_3_1000_bandwidth_100_thresholds_LS.png}
+    \caption{SNR Thresholds (not in decibels)}
+    \label{fig:Thresholds}
+\end{figure}
+
+The experiments presented here are on Barabasi-Albert graphs of 1000 vertices, with $k=100$.
   \end{block}
 
-  \begin{block}{Nam cursus consequat egestas}
+\end{column}
 
-    Nulla eget sem quam. Ut aliquam volutpat nisi vestibulum convallis. Nunc a
-    lectus et eros facilisis hendrerit eu non urna. Interdum et malesuada fames
-    ac ante \textit{ipsum primis} in faucibus. Etiam sit amet velit eget sem
-    euismod tristique. Praesent enim erat, porta vel mattis sed, pharetra sed
-    ipsum. Morbi commodo condimentum massa, \textit{tempus venenatis} massa
-    hendrerit quis. Maecenas sed porta est. Praesent mollis interdum lectus,
-    sit amet sollicitudin risus tincidunt non.
+\separatorcolumn
 
-    Etiam sit amet tempus lorem, aliquet condimentum velit. Donec et nibh
-    consequat, sagittis ex eget, dictum orci. Etiam quis semper ante. Ut eu
-    mauris purus. Proin nec consectetur ligula. Mauris pretium molestie
-    ullamcorper. Integer nisi neque, aliquet et odio non, sagittis porta justo.
+\begin{column}{\colwidth}
 
+  \begin{exampleblock}{Details about the Theoretical Results}
+    LS reconstruction is \emph{linear} and noise is \emph{independent} to the signal, so if
+    \[
+    \vect{y} = \vect{x} + \sigma \cdot \vect{\epsilon}
+    \]
+    and we observe $\vect{y}$ at $\set{S}$, then
+    \[
+    \mathbb{E}[\textrm{MSE}_{\set{S}}] = {\color{Oxford_burnt_orange}\xi_{1}(\set{S})} + \sigma {\color{Oxford_rich_burgundy}\xi_{2}(\set{S})}. \]
     \begin{itemize}
-      \item \textbf{Sed consequat} id ante vel efficitur. Praesent congue massa
-        sed est scelerisque, elementum mollis augue iaculis.
-        \begin{itemize}
-          \item In sed est finibus, vulputate
-            nunc gravida, pulvinar lorem. In maximus nunc dolor, sed auctor eros
-            porttitor quis.
-          \item Fusce ornare dignissim nisi. Nam sit amet risus vel lacus
-            tempor tincidunt eu a arcu.
-          \item Donec rhoncus vestibulum erat, quis aliquam leo
-            gravida egestas.
-        \end{itemize}
-      \item \textbf{Sed luctus, elit sit amet} dictum maximus, diam dolor
-        faucibus purus, sed lobortis justo erat id turpis.
-      \item \textbf{Pellentesque facilisis dolor in leo} bibendum congue.
-        Maecenas congue finibus justo, vitae eleifend urna facilisis at.
+    \setlength{\itemindent}{1em}
+            \item \errA is noiseless error.
+            \item If \errB increases and $\sigma$ is big, then $\mathbb{E}[\textrm{MSE}_{\set{S}}]$ increases!
+
     \end{itemize}
-
-  \end{block}
-
-\end{column}
-
-\separatorcolumn
-
-\begin{column}{\colwidth}
-
-  \begin{exampleblock}{A highlighted block containing some math}
-
-    A different kind of highlighted block.
-
-    $$
-    \int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}
-    $$
-
-    Interdum et malesuada fames $\{1, 4, 9, \ldots\}$ ac ante ipsum primis in
-    faucibus. Cras eleifend dolor eu nulla suscipit suscipit. Sed lobortis non
-    felis id vulputate.
-
-    \heading{A heading inside a block}
-
-    Praesent consectetur mi $x^2 + y^2$ metus, nec vestibulum justo viverra
-    nec. Proin eget nulla pretium, egestas magna aliquam, mollis neque. Vivamus
-    dictum $\mathbf{u}^\intercal\mathbf{v}$ sagittis odio, vel porta erat
-    congue sed. Maecenas ut dolor quis arcu auctor porttitor.
-
-    \heading{Another heading inside a block}
-
-    Sed augue erat, scelerisque a purus ultricies, placerat porttitor neque.
-    Donec $P(y \mid x)$ fermentum consectetur $\nabla_x P(y \mid x)$ sapien
-    sagittis egestas. Duis eget leo euismod nunc viverra imperdiet nec id
-    justo.
-
+            Under LS, as you add another sample, either:
+            \begin{align*}
+                &{\color{myorange} \xi_{1}(\set{S})} \textrm{ decreases } &&({\color{mygreen} \downarrow}) &\textrm{ and }  &&{\color{Oxford_rich_burgundy} \xi_{2}(\set{S})} \textrm{ increases } &({\color{Oxford_bright_red}\uparrow}) \textrm{ or} \\
+                &{\color{myorange} \xi_{1}(\set{S})} \textrm{ stays the same } &&(=) &\textrm{ and } &&{\color{Oxford_rich_burgundy} \xi_{2}(\set{S})} \textrm{ decreases } &({\color{mygreen} \downarrow})
+            \end{align*}
+    \errA  can decrease up to $k$ times, for $k$ = bandwidth. 
   \end{exampleblock}
 
-  \begin{block}{Nullam vel erat at velit convallis laoreet}
-
-    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-    inceptos himenaeos. Phasellus libero enim, gravida sed erat sit amet,
-    scelerisque congue diam. Fusce dapibus dui ut augue pulvinar iaculis.
-
-    \begin{table}
-      \centering
-      \begin{tabular}{l r r c}
-        \toprule
-        \textbf{First column} & \textbf{Second column} & \textbf{Third column} & \textbf{Fourth} \\
-        \midrule
-        Foo & 13.37 & 384,394 & $\alpha$ \\
-        Bar & 2.17 & 1,392 & $\beta$ \\
-        Baz & 3.14 & 83,742 & $\delta$ \\
-        Qux & 7.59 & 974 & $\gamma$ \\
-        \bottomrule
-      \end{tabular}
-      \caption{A table caption.}
-    \end{table}
-
-    Donec quis posuere ligula. Nunc feugiat elit a mi malesuada consequat. Sed
-    imperdiet augue ac nibh aliquet tristique. Aenean eu tortor vulputate,
-    eleifend lorem in, dictum urna. Proin auctor ante in augue tincidunt
-    tempor. Proin pellentesque vulputate odio, ac gravida nulla posuere
-    efficitur. Aenean at velit vel dolor blandit molestie. Mauris laoreet
-    commodo quam, non luctus nibh ullamcorper in. Class aptent taciti sociosqu
-    ad litora torquent per conubia nostra, per inceptos himenaeos.
-
-    Nulla varius finibus volutpat. Mauris molestie lorem tincidunt, iaculis
-    libero at, gravida ante. Phasellus at felis eu neque suscipit suscipit.
-    Integer ullamcorper, dui nec pretium ornare, urna dolor consequat libero,
-    in feugiat elit lorem euismod lacus. Pellentesque sit amet dolor mollis,
-    auctor urna non, tempus sem.
-
+  \vskip1ex
+  \begin{block}{Discussion}
+  \begin{itemize}
+      \item Reconstruction error can sometimes be decreased by removing a vertex from the observation set.
+      \item Even if picked by an `optimal' sampling scheme!
+      \end{itemize}
+We conclude that:
+      \begin{itemize}
+      \item Certain existing results in the literature for noiseless settings may not necessarily generalise to the noisy case.
+      \item This demonstrates the need to consider both sample selection and reconstruction methods at the same time -- for example, one can use a noise-aware regularisation scheme to mitigate this issue. \cite{chamon2017greedy}
+  \end{itemize}
+  \vskip0ex
   \end{block}
 
   \begin{block}{References}

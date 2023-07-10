@@ -17,6 +17,8 @@
 
 \newfontfamily\Raleway[Ligatures=TeX]{Raleway}
 \newfontfamily\Lato[Ligatures=TeX]{Lato}
+\newfontfamily\PTSans[Ligatures=TeX]{PTSans}
+\newfontfamily\Arial[Ligatures=TeX]{Arial}
 
 \usefonttheme{professionalfonts}
 
@@ -27,14 +29,16 @@
   BoldItalicFont=*-Italic
 ]
 
-\setbeamerfont{headline}{family=\Raleway}
-\setbeamerfont{headline title}{size=\Huge,series=\bfseries}
+\setbeamerfont{headline}{family=\PTSans}
+\setbeamerfont{headline title}{size=\veryHuge,series=\bfseries}
 \setbeamerfont{headline author}{size=\Large}
-\setbeamerfont{headline institute}{size=\normalsize}
-\setbeamerfont{block title}{family=\Raleway,size=\large,series=\bfseries}
-\setbeamerfont{heading}{family=\Lato,series=\bfseries}
-\setbeamerfont{caption}{size=\small}
-\setbeamerfont{footline}{family=\Raleway,size=\normalsize}
+\setbeamerfont{headline institute}{size=\large}
+\setbeamerfont{block title}{family=\PTSans,size=\LARGE,series=\bfseries}
+\setbeamerfont{block body}{family=\PTSans,size=\Large}
+\setbeamerfont{heading}{family=\PTSans,series=\bfseries}
+%\setbeamerfont{caption}{size=\small}
+\setbeamerfont{caption}{size=\normalsize}
+\setbeamerfont{footline}{family=\PTSans,size=\normalsize}
 
 % ====================
 % Macros
@@ -65,12 +69,14 @@
 \setbeamertemplate{enumerate subsubitem}{\insertsubsubenumlabel.}
 
 % Equation
+%\setlength\belowdisplayshortskip{2ex}
 \setlength\belowdisplayshortskip{2ex}
 
 % Caption
 \setbeamertemplate{caption}[numbered]
 \setbeamertemplate{caption label separator}[period]
-\setlength{\abovecaptionskip}{2ex}
+%\setlength{\abovecaptionskip}{2ex}
+\setlength{\abovecaptionskip}{1ex}
 \setlength{\belowcaptionskip}{1ex}
 
 % Bibliography
@@ -178,7 +184,7 @@
 \setbeamertemplate{block end}
 {
   \end{beamercolorbox}
-  \vskip0pt
+  \vskip15pt
   \vspace*{2ex}
 }
 
@@ -205,7 +211,7 @@
   \end{adjustwidth}
   \vskip1ex
   \end{beamercolorbox}
-  \vskip0pt
+  \vskip10pt
   \vspace*{2ex}
 }
 
@@ -232,7 +238,7 @@
   \end{adjustwidth}
   \vskip1ex
   \end{beamercolorbox}
-  \vskip0pt
+  \vskip10pt
   \vspace*{2ex}
 }
 
